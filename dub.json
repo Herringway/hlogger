@@ -1,0 +1,9 @@
+{
+	"authors": [
+		"Cameron \"Herringway\" Ross"
+	],
+	"copyright": "Copyright © 2022, Cameron \"Herringway\" Ross",
+	"description": "Prettier console logging via std.experimental.logger",
+	"license": "BSL-1.0",
+	"name": "prettylogger"
+}
