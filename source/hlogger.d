@@ -4,7 +4,7 @@
  + Copyright: Copyright Cameron Ross 2025
  + License: $(LINK2 http://www.boost.org/LICENSE_1_0.txt, Boost License 1.0).
  +/
-module prettylogger;
+module hlogger;
 
 import std.datetime;
 import std.format;
@@ -15,7 +15,7 @@ import std.stdio;
  + Logs messages to a .html file. When viewed in a browser, it provides an
  + easily-searchable and filterable view of logged messages.
  +/
-public class PrettyLogger : Logger {
+public class HLogger : Logger {
 	///File handle being written to.
 	private File handle;
 	Config config;
