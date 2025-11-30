@@ -18,6 +18,32 @@ import std.stdio;
 public class HLogger : Logger {
 	///File handle being written to.
 	private File handle;
+	static struct Config {
+		bool fullTimestamp;
+		bool includeTime = true;
+		bool includeSource;
+		bool includeThread;
+		bool[LogLevel] showLogLevelLabel = [
+			LogLevel.all: true,
+			LogLevel.trace: true,
+			LogLevel.info: true,
+			LogLevel.warning: true,
+			LogLevel.error: true,
+			LogLevel.critical: true,
+			LogLevel.fatal: true,
+			LogLevel.off: true,
+		];
+		ubyte[LogLevel] levelColours = [
+			LogLevel.all: 4,
+			LogLevel.trace: 7,
+			LogLevel.info: 10,
+			LogLevel.warning: 11,
+			LogLevel.error: 124,
+			LogLevel.critical: 160,
+			LogLevel.fatal: 9,
+			LogLevel.off: 5,
+		];
+	}
 	Config config;
 
 	/++
@@ -67,31 +93,4 @@ public class HLogger : Logger {
 			writer.formattedWrite!"%s\n"(payLoad.msg);
 		}
 	}
-}
-
-struct Config {
-	bool fullTimestamp;
-	bool includeTime = true;
-	bool includeSource;
-	bool includeThread;
-	bool[LogLevel] showLogLevelLabel = [
-		LogLevel.all: true,
-		LogLevel.trace: true,
-		LogLevel.info: true,
-		LogLevel.warning: true,
-		LogLevel.error: true,
-		LogLevel.critical: true,
-		LogLevel.fatal: true,
-		LogLevel.off: true,
-	];
-	ubyte[LogLevel] levelColours = [
-		LogLevel.all: 4,
-		LogLevel.trace: 7,
-		LogLevel.info: 10,
-		LogLevel.warning: 11,
-		LogLevel.error: 124,
-		LogLevel.critical: 160,
-		LogLevel.fatal: 9,
-		LogLevel.off: 5,
-	];
 }
