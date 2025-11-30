@@ -54,7 +54,7 @@ public class HLogger : Logger {
 	 +   lv = Minimum message level to write to the log
 	 +/
 	this(File file, LogLevel lv = LogLevel.all) @safe
-	in(file.isOpen)
+		in(file.isOpen)
 	{
 		super(lv);
 		handle = file;
