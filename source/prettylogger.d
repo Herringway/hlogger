@@ -1,11 +1,15 @@
 /++
- + Adds support for logging prettier std.experimental.logger messages.
+ + Adds support for logging prettier std.logger messages.
  + Authors: Cameron "Herringway" Ross
- + Copyright: Copyright Cameron Ross 2022
+ + Copyright: Copyright Cameron Ross 2025
  + License: $(LINK2 http://www.boost.org/LICENSE_1_0.txt, Boost License 1.0).
  +/
 module prettylogger;
-import std.experimental.logger;
+
+import std.datetime;
+import std.format;
+import std.logger;
+import std.range;
 import std.stdio;
 /++
  + Logs messages to a .html file. When viewed in a browser, it provides an
@@ -41,25 +45,53 @@ public class PrettyLogger : Logger {
 	 + See_Also: $(LINK https://dlang.org/library/std/experimental/logger.html)
 	 +/
 	override public void writeLogMsg(ref LogEntry payLoad) @safe {
-		import std.format : formattedWrite;
-		import std.datetime : TimeOfDay;
-		import std.range : put;
-		auto logLevelColours = [
-			LogLevel.all: 4,
-			LogLevel.trace: 7,
-			LogLevel.info: 10,
-			LogLevel.warning: 11,
-			LogLevel.error: 124,
-			LogLevel.critical: 160,
-			LogLevel.fatal: 9,
-			LogLevel.off: 5,
-		];
 		if (payLoad.logLevel >= logLevel) {
-			handle.lockingTextWriter.formattedWrite!"[\x1B[38;5;%dm%s - %s\x1B[0m] %s\n"(logLevelColours[payLoad.logLevel], cast(TimeOfDay)payLoad.timestamp, payLoad.logLevel, payLoad.msg);
+			auto writer = handle.lockingTextWriter;
+			if (config.includeTime) {
+				if (config.fullTimestamp) {
+					payLoad.timestamp.toISOExtString(writer);
+				} else {
+					writer.formattedWrite!"%s"(cast(TimeOfDay)payLoad.timestamp);
+				}
+				put(writer, " ");
+			}
+			if (config.includeThread) {
+				writer.formattedWrite!" %s"(payLoad.threadId);
+			}
+			if (config.includeSource) {
+				writer.formattedWrite!" %s:%s:%s"(payLoad.file, payLoad.line, payLoad.funcName);
+			}
+			if (config.showLogLevelLabel.get(payLoad.logLevel, true)) {
+				writer.formattedWrite!"[\x1B[38;5;%dm%s\x1B[0m] "(config.levelColours[payLoad.logLevel], payLoad.logLevel);
+			}
+			writer.formattedWrite!"%s\n"(payLoad.msg);
 		}
 	}
 }
 
 struct Config {
-	ubyte[LogLevel] levelColours;
+	bool fullTimestamp;
+	bool includeTime = true;
+	bool includeSource;
+	bool includeThread;
+	bool[LogLevel] showLogLevelLabel = [
+		LogLevel.all: true,
+		LogLevel.trace: true,
+		LogLevel.info: true,
+		LogLevel.warning: true,
+		LogLevel.error: true,
+		LogLevel.critical: true,
+		LogLevel.fatal: true,
+		LogLevel.off: true,
+	];
+	ubyte[LogLevel] levelColours = [
+		LogLevel.all: 4,
+		LogLevel.trace: 7,
+		LogLevel.info: 10,
+		LogLevel.warning: 11,
+		LogLevel.error: 124,
+		LogLevel.critical: 160,
+		LogLevel.fatal: 9,
+		LogLevel.off: 5,
+	];
 }
