@@ -75,7 +75,7 @@ public class HLogger : Logger {
 			auto writer = handle.lockingTextWriter;
 			if (config.includeTime) {
 				if (config.fullTimestamp) {
-					payLoad.timestamp.toISOExtString(writer);
+					payLoad.timestamp.toISOExtString(writer, 6);
 				} else {
 					writer.formattedWrite!"%s"(cast(TimeOfDay)payLoad.timestamp);
 				}
