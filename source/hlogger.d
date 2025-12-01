@@ -81,14 +81,14 @@ public class HLogger : Logger {
 				}
 				put(writer, " ");
 			}
-			if (config.includeThread) {
-				writer.formattedWrite!" %s"(payLoad.threadId);
-			}
-			if (config.includeSource) {
-				writer.formattedWrite!" %s:%s:%s"(payLoad.file, payLoad.line, payLoad.funcName);
-			}
 			if (config.showLogLevelLabel.get(payLoad.logLevel, true)) {
 				writer.formattedWrite!"[\x1B[38;5;%dm%s\x1B[0m] "(config.levelColours[payLoad.logLevel], payLoad.logLevel);
+			}
+			if (config.includeThread) {
+				writer.formattedWrite!"%s "(payLoad.threadId);
+			}
+			if (config.includeSource) {
+				writer.formattedWrite!"%s:%s:%s "(payLoad.file, payLoad.line, payLoad.funcName);
 			}
 			writer.formattedWrite!"%s\n"(payLoad.msg);
 		}
